@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Орган — Король Музыкальных Инструментов</title>
+<meta name="description" content="Калибровочная модель настройки органных труб. Физика, история, калькулятор, Telegram-бот.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; user-select:none; -webkit-user-select:none; }
+input, textarea, select { user-select:text; -webkit-user-select:text; }
+
+:root {
+  --bg:#06060e; --bg2:#0b0b18; --bg3:#10101f; --bg4:#14142a;
+  --violet:#7c3aed; --violet2:#a855f7; --violet3:#c084fc; --violet4:#e9d5ff;
+  --cream:#ede9fe; --muted:#6d6a85;
+  --border:rgba(124,58,237,0.25); --glow:rgba(124,58,237,0.2);
+  --gold:#fbbf24;
+}
+html { scroll-behavior:smooth; }
+body { background:var(--bg); color:var(--cream); font-family:'Crimson Pro',Georgia,serif; font-size:18px; line-height:1.7; overflow-x:hidden; }
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-thumb { background:var(--violet); border-radius:3px; }
+
+nav { position:fixed; top:0; left:0; right:0; z-index:1000;
+  background:rgba(6,6,14,0.97); border-bottom:1px solid var(--border);
+  backdrop-filter:blur(12px); padding:0 2rem;
+  display:flex; align-items:center; height:56px; }
+.nav-logo { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--violet2); margin-right:auto; letter-spacing:0.05em; }
+nav a { color:var(--muted); text-decoration:none; font-size:0.75rem; letter-spacing:0.08em;
+  text-transform:uppercase; padding:0 0.6rem; height:56px; display:flex; align-items:center;
+  border-bottom:2px solid transparent; transition:color 0.2s, border-color 0.2s; }
+nav a:hover { color:var(--violet2); border-bottom-color:var(--violet2); }
+@media(max-width:900px) { nav a{display:none} }
+
+.hero { min-height:100vh; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; text-align:center; padding:7rem 2rem 4rem; position:relative; overflow:hidden; }
+.hero-bg { position:absolute; inset:0; pointer-events:none;
+  background: radial-gradient(ellipse 70% 60% at 50% 40%, rgba(124,58,237,0.15) 0%, transparent 70%),
+              radial-gradient(ellipse 40% 50% at 15% 70%, rgba(159,30,245,0.1) 0%, transparent 60%),
+              radial-gradient(ellipse 40% 40% at 85% 20%, rgba(124,58,237,0.08) 0%, transparent 60%); }
+.particles { position:absolute; inset:0; pointer-events:none; }
+.particle { position:absolute; border-radius:50%; background:var(--violet2); opacity:0; animation: pfloat linear infinite; }
+@keyframes pfloat { 0%{opacity:0;transform:translateY(100vh) scale(0)} 10%{opacity:0.6} 90%{opacity:0.2} 100%{opacity:0;transform:translateY(-10vh) scale(1)} }
+.hero-pipes { position:absolute; bottom:0; left:0; right:0; display:flex; align-items:flex-end;
+  justify-content:center; gap:3px; pointer-events:none; opacity:0.08; height:50%; }
+.hero-pipes span { background: linear-gradient(to top, var(--violet), var(--violet3));
+  width:16px; border-radius:2px 2px 0 0; animation: ppulse 2.5s ease-in-out infinite; }
+@keyframes ppulse { 0%,100%{opacity:0.2} 50%{opacity:1} }
+.hero-eyebrow { font-size:0.78rem; letter-spacing:0.32em; text-transform:uppercase;
+  color:var(--violet2); margin-bottom:1.5rem; animation: fadedown 1s ease both; }
+@keyframes fadedown { from{opacity:0; transform:translateY(-20px)} to{opacity:1; transform:none} }
+@keyframes fadeup { from{opacity:0; transform:translateY(20px)} to{opacity:1; transform:none} }
+.hero h1 { font-family:'Playfair Display',serif; font-size:clamp(3rem, 9vw, 8rem); font-weight:900;
+  line-height:0.95; animation: fadeup 1s 0.2s ease both; }
+.hero h1 em { font-style:italic; color:var(--violet2); display:block; }
+.hero-sub { margin-top:2rem; max-width:580px; font-size:1.15rem; color:var(--muted);
+  font-style:italic; animation: fadeup 1s 0.4s ease both; }
+.hero-divider { width:100px; height:1px; background: linear-gradient(90deg, transparent, var(--violet2), transparent);
+  margin:2.5rem auto; animation: fadeup 1s 0.3s ease both; }
+.scroll-hint { position:absolute; bottom:2rem; left:50%; transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:0.5rem; color:var(--muted);
+  font-size:0.72rem; letter-spacing:0.2em; text-transform:uppercase;
+  animation: sfloat 2s 1s ease-in-out infinite both; }
+.scroll-hint::after { content:''; width:1px; height:36px;
+  background: linear-gradient(to bottom, var(--violet2), transparent); }
+@keyframes sfloat { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(-8px)} }
+
+section { padding:6rem 0; position:relative; }
+section:nth-child(even) { background:var(--bg2); }
+.container { max-width:960px; margin:0 auto; padding:0 2rem; }
+.container-wide { max-width:1200px; margin:0 auto; padding:0 2rem; }
+.section-label { font-size:0.73rem; letter-spacing:0.32em; text-transform:uppercase; color:var(--violet2); margin-bottom:0.75rem; display:block; }
+.section-title { font-family:'Playfair Display',serif; font-size:clamp(2rem, 4vw, 3.2rem);
+  font-weight:700; line-height:1.1; color:var(--cream); margin-bottom:1.5rem; }
+.section-title em { font-style:italic; color:var(--violet2); }
+.lead { font-size:1.2rem; color:var(--muted); font-style:italic; max-width:660px; margin-bottom:3rem; }
+
+/* TIMELINE */
+.timeline { position:relative; padding-left:2rem; }
+.timeline::before { content:''; position:absolute; left:0; top:0; bottom:0; width:1px;
+  background: linear-gradient(to bottom, transparent, var(--violet), transparent); }
+.timeline-item { position:relative; margin-bottom:1rem; opacity:0; transform:translateX(-20px);
+  transition: opacity 0.6s ease, transform 0.6s ease; }
+.timeline-item.visible { opacity:1; transform:translateX(0); }
+.timeline-item::before { content:''; position:absolute; left:-2.375rem; top:1rem;
+  width:10px; height:10px; border-radius:50%; background:var(--violet);
+  box-shadow:0 0 14px var(--violet2); transition:transform 0.3s; }
+.timeline-item.open::before { transform:scale(1.6); }
+.timeline-header { background:var(--bg3); border:1px solid var(--border); border-radius:4px;
+  padding:1.2rem 1.5rem; cursor:pointer; display:flex; align-items:center; gap:1rem;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s; }
+.timeline-header:hover { background:rgba(124,58,237,0.1); border-color:var(--violet2); transform:translateX(4px); }
+.timeline-item.open .timeline-header { border-color:var(--violet2); background:rgba(124,58,237,0.12); }
+.timeline-year { font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:var(--violet2); white-space:nowrap; min-width:120px; }
+.timeline-header h3 { font-family:'Playfair Display',serif; font-size:1.05rem; color:var(--cream); flex:1; }
+.tl-toggle { width:24px; height:24px; border-radius:50%; border:1px solid var(--border);
+  color:var(--violet2); display:flex; align-items:center; justify-content:center;
+  font-size:1.1rem; transition:transform 0.3s, background 0.2s; flex-shrink:0; }
+.timeline-item.open .tl-toggle { transform:rotate(45deg); background:var(--violet); color:#fff; }
+.timeline-body { max-height:0; overflow:hidden;
+  transition:max-height 0.6s cubic-bezier(0.4,0,0.2,1);
+  background:var(--bg4); border:1px solid var(--border); border-top:none; border-radius:0 0 4px 4px; }
+.timeline-item.open .timeline-body { max-height:1200px; }
+.tl-inner { padding:1.5rem; }
+.tl-content { display:grid; grid-template-columns:1fr auto; gap:1.5rem; align-items:start; margin-bottom:1rem; }
+@media(max-width:600px) { .tl-content{grid-template-columns:1fr} }
+.tl-inner p { color:var(--muted); font-size:1rem; }
+.listen-btn { display:inline-flex; align-items:center; gap:0.5rem; background:transparent;
+  border:1px solid var(--violet); color:var(--violet2); padding:0.5rem 1.2rem;
+  font-family:'Crimson Pro',serif; font-size:0.95rem; cursor:pointer; border-radius:2px;
+  white-space:nowrap; transition:background 0.2s, color 0.2s; margin-top:1rem; margin-right:0.5rem; }
+.listen-btn:hover { background:var(--violet); color:#fff; }
+.listen-btn.playing { background:var(--violet); color:#fff; animation:btnpulse 0.6s ease infinite alternate; }
+@keyframes btnpulse { from{box-shadow:0 0 0 0 rgba(124,58,237,0.5)} to{box-shadow:0 0 0 10px rgba(124,58,237,0)} }
+.instr-img { width:120px; height:90px; object-fit:cover; border-radius:3px;
+  border:1px solid var(--border); cursor:pointer; transition:transform 0.3s, box-shadow 0.3s; }
+.instr-img:hover { transform:scale(1.08); box-shadow:0 8px 24px rgba(124,58,237,0.3); }
+.tl-video { width:100%; max-width:400px; border-radius:4px; border:1px solid var(--border); margin-top:0.5rem; }
+.tl-photos { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:0.5rem; margin-top:1rem; }
+.tl-photos img { width:100%; aspect-ratio:1; object-fit:cover; border-radius:3px; cursor:pointer;
+  border:1px solid var(--border); transition:transform 0.3s, border-color 0.3s; }
+.tl-photos img:hover { transform:scale(1.05); border-color:var(--violet2); }
+
+/* ANATOMY */
+.anatomy-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
+  gap:1.5px; margin-top:2rem; border:1px solid var(--border); border-radius:2px; overflow:hidden; }
+.anatomy-card { background:var(--bg3); padding:1.8rem; opacity:0; transform:translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease, background 0.3s; }
+.anatomy-card.visible { opacity:1; transform:translateY(0); }
+.anatomy-card:hover { background:rgba(124,58,237,0.08); transform:translateY(-3px); }
+.anatomy-icon { font-size:2rem; margin-bottom:0.8rem; display:block; }
+.anatomy-card h3 { font-family:'Playfair Display',serif; font-size:1.05rem; color:var(--violet2); margin-bottom:0.4rem; }
+.anatomy-card p { font-size:0.93rem; color:var(--muted); }
+
+/* PHYSICS */
+.formula-block { background:var(--bg3); border:1px solid var(--border); border-radius:4px;
+  padding:2.5rem; margin:2rem 0; position:relative; overflow:hidden; }
+.formula-block::before { content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse at center, rgba(124,58,237,0.08), transparent 70%); }
+.formula-main { font-family:'JetBrains Mono',monospace; font-size:clamp(0.85rem,2vw,1.2rem);
+  color:var(--violet3); text-align:center; margin:1rem 0; position:relative; letter-spacing:0.03em; }
+.formula-params { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));
+  gap:1rem; margin-top:1.5rem; position:relative; }
+.param-item { display:flex; gap:1rem; align-items:flex-start; }
+.param-key { font-family:'JetBrains Mono',monospace; color:var(--violet2); font-size:1.1rem; min-width:22px; padding-top:2px; }
+.param-desc { font-size:0.9rem; color:var(--muted); }
+
+/* KUZBASS */
+.kuzbass-card { background:var(--bg3); border:1px solid var(--border); border-radius:4px;
+  padding:3rem; display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:center; }
+@media(max-width:640px) { .kuzbass-card{grid-template-columns:1fr} }
+.stat-value { font-family:'Playfair Display',serif; font-size:2.5rem; color:var(--violet2); line-height:1; }
+.stat-label { font-size:0.82rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; }
+.kuzbass-text h3 { font-family:'Playfair Display',serif; font-size:1.4rem; color:var(--cream); margin-bottom:1rem; }
+.kuzbass-text p { color:var(--muted); font-size:1rem; margin-bottom:0.75rem; }
+
+/* CALCULATOR */
+.calc-wrapper { background:var(--bg3); border:1px solid var(--border); border-radius:4px; overflow:hidden; margin-top:3rem; }
+.calc-header { background:rgba(124,58,237,0.1); border-bottom:1px solid var(--border);
+  padding:1.5rem 2rem; display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
+.calc-header h3 { font-family:'Playfair Display',serif; font-size:1.3rem; color:var(--violet2); }
+.calc-formula-tag { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--muted);
+  background:rgba(0,0,0,0.3); padding:0.25rem 0.75rem; border-radius:2px; margin-left:auto; }
+.calc-body { padding:2rem; }
+.calc-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:1.5rem; margin-bottom:2rem; }
+.field-group { display:flex; flex-direction:column; gap:0.5rem; }
+.field-label { font-size:0.78rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); }
+.field-label span { color:var(--violet2); font-family:'JetBrains Mono',monospace; }
+select, input[type="number"] { background:rgba(0,0,0,0.5); border:1px solid var(--border);
+  color:var(--cream); padding:0.75rem 1rem; font-family:'Crimson Pro',serif; font-size:1rem;
+  border-radius:2px; width:100%; transition:border-color 0.2s, box-shadow 0.2s; appearance:none; }
+select:focus, input:focus { outline:none; border-color:var(--violet2); box-shadow:0 0 0 2px rgba(124,58,237,0.2); }
+select option { background:#0b0b18; }
+.calc-btn { background:var(--violet); color:#fff; border:none; padding:1rem 3rem;
+  font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700;
+  cursor:pointer; border-radius:2px; letter-spacing:0.05em;
+  transition:background 0.2s, transform 0.1s, box-shadow 0.2s; }
+.calc-btn:hover { background:#6d28d9; box-shadow:0 0 20px rgba(124,58,237,0.5); }
+.calc-btn:active { transform:scale(0.98); }
+.calc-result { margin-top:2rem; padding:2rem; background:rgba(124,58,237,0.07);
+  border:1px solid var(--border); border-radius:2px; display:none; animation:fadeup 0.4s ease; }
+.calc-result.show { display:block; }
+.result-main { font-family:'Playfair Display',serif; font-size:clamp(2rem,5vw,3.5rem);
+  color:var(--violet2); text-align:center; margin-bottom:0.5rem; }
+.result-sub { text-align:center; color:var(--muted); font-style:italic; }
+.result-details { margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--border);
+  font-family:'JetBrains Mono',monospace; font-size:0.78rem; color:var(--muted);
+  display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; }
+@media(max-width:480px) { .result-details{grid-template-columns:1fr} }
+.detail-line span { color:var(--violet3); }
+
+/* KEYBOARD */
+.keyboard-section { margin-top:4rem; }
+.keyboard-section h3 { font-family:'Playfair Display',serif; font-size:1.5rem; color:var(--cream); margin-bottom:0.4rem; }
+.keyboard-sub { color:var(--muted); font-style:italic; font-size:1rem; margin-bottom:1.5rem; }
+.keyboard-wrap { overflow-x:auto; overflow-y:visible; padding-bottom:40px; }
+.keyboard { display:flex; align-items:flex-end; height:160px; min-width:620px;
+  position:relative; padding:0 8px; }
+.key-white { width:44px; height:148px; background:linear-gradient(to bottom, #e0d4f8, #f0e8ff);
+  border:1px solid rgba(124,58,237,0.3); border-radius:0 0 4px 4px; cursor:pointer;
+  position:relative; flex-shrink:0; z-index:1; transition:background 0.08s, transform 0.08s;
+  margin:0 1px; display:flex; align-items:flex-end; justify-content:center; padding-bottom:7px; }
+.key-white:hover { background:linear-gradient(to bottom, #c8a8f0, #ddc0ff); }
+.key-white.pressed { background:#b090e8; transform:translateY(3px); }
+.key-white span { font-size:0.52rem; color:var(--violet); font-family:'JetBrains Mono',monospace;
+  text-align:center; line-height:1.2; }
+.key-black { width:28px; height:94px; background:linear-gradient(to bottom, #1a0a2e, #2d1052);
+  border:1px solid rgba(124,58,237,0.5); border-radius:0 0 3px 3px;
+  cursor:pointer; position:absolute; z-index:2; transition:background 0.08s, transform 0.08s; top:0; }
+.key-black:hover { background:linear-gradient(to bottom, #3d1a6e, #5a2090); }
+.key-black.pressed { background:#5a2090; transform:translateY(3px); }
+.playing-note { text-align:center; margin-top:1.5rem; min-height:2rem;
+  font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--violet2);
+  font-style:italic; transition:opacity 0.3s; }
+
+/* GALLERY (Calibration) */
+.gallery-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));
+  gap:1rem; margin-top:2rem; }
+.gallery-item { aspect-ratio:1; overflow:hidden; border-radius:4px;
+  border:1px solid var(--border); cursor:pointer; position:relative;
+  transition:transform 0.3s, box-shadow 0.3s, border-color 0.3s; }
+.gallery-item:hover { transform:translateY(-4px); border-color:var(--violet2); box-shadow:0 12px 24px rgba(124,58,237,0.25); }
+.gallery-item img { width:100%; height:100%; object-fit:cover; transition:transform 0.4s; }
+.gallery-item:hover img { transform:scale(1.08); }
+
+/* VIDEO GALLERY */
+.video-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));
+  gap:1.5rem; margin-top:2rem; }
+.video-card { background:var(--bg3); border:1px solid var(--border); border-radius:4px; overflow:hidden;
+  transition:transform 0.3s, box-shadow 0.3s; }
+.video-card:hover { transform:translateY(-4px); box-shadow:0 12px 28px rgba(124,58,237,0.3); }
+.video-card video { width:100%; aspect-ratio:16/9; object-fit:cover; background:#000; display:block; }
+.video-card-body { padding:1rem 1.25rem; }
+.video-card h4 { font-family:'Playfair Display',serif; font-size:1rem; color:var(--cream); margin-bottom:0.25rem; }
+.video-card p { font-size:0.85rem; color:var(--muted); }
+
+/* METODICHKA VIEWER */
+.metodichka-intro { display:grid; grid-template-columns:auto 1fr; gap:2.5rem; align-items:center;
+  background:var(--bg3); border:1px solid var(--border); padding:2.5rem; border-radius:4px;
+  margin-top:2rem; transition: box-shadow 0.3s, border-color 0.3s; }
+.metodichka-intro:hover { border-color:var(--violet2); }
+@media(max-width:640px) { .metodichka-intro{grid-template-columns:1fr; text-align:center; justify-items:center;} }
+.metodichka-cover { width:180px; aspect-ratio:1191/1684; object-fit:cover; border-radius:3px;
+  box-shadow:0 12px 30px rgba(0,0,0,0.4); border:1px solid var(--border); pointer-events:none; }
+.metodichka-info h3 { font-family:'Playfair Display',serif; font-size:1.6rem; color:var(--cream); margin-bottom:0.5rem; }
+.metodichka-info .pages { font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:var(--gold);
+  letter-spacing:0.15em; text-transform:uppercase; margin-bottom:1rem; }
+.metodichka-info p { color:var(--muted); margin-bottom:1.5rem; }
+.btn-primary { display:inline-flex; align-items:center; gap:0.5rem; background:var(--violet); color:#fff;
+  padding:0.85rem 1.8rem; font-family:'Crimson Pro',serif; font-size:1rem; cursor:pointer;
+  border-radius:2px; letter-spacing:0.05em; border:1px solid var(--violet);
+  transition: background 0.2s, box-shadow 0.2s; }
+.btn-primary:hover { background:#6d28d9; box-shadow:0 0 20px rgba(124,58,237,0.5); }
+
+/* PROTECTED VIEWER */
+.viewer { margin-top:2rem; background:var(--bg3); border:1px solid var(--border); border-radius:4px;
+  overflow:hidden; display:none; }
+.viewer.show { display:block; animation: fadeup 0.4s ease; }
+.viewer-header { background:rgba(124,58,237,0.1); border-bottom:1px solid var(--border);
+  padding:1rem 1.5rem; display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
+.viewer-title { font-family:'Playfair Display',serif; font-size:1.05rem; color:var(--cream); flex:1; }
+.viewer-protected { font-size:0.7rem; color:var(--gold); letter-spacing:0.1em;
+  text-transform:uppercase; padding:0.3rem 0.7rem; border:1px solid var(--gold);
+  border-radius:24px; display:inline-flex; align-items:center; gap:0.4rem; }
+.viewer-protected::before { content:'🔒'; font-size:0.8rem; }
+.viewer-body { padding:1rem; background:#0a0a14; }
+.viewer-stage { position:relative; display:flex; justify-content:center; align-items:center;
+  min-height:400px; }
+.viewer-page { max-width:100%; max-height:80vh; border-radius:3px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.5);
+  user-select:none; -webkit-user-select:none; pointer-events:none;
+  -webkit-user-drag:none; -webkit-touch-callout:none; }
+.viewer-overlay { position:absolute; inset:0; cursor:default;
+  background:transparent; user-select:none; pointer-events:auto; }
+.viewer-controls { padding:1rem 1.5rem; background:rgba(124,58,237,0.05);
+  border-top:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center; gap:1rem; flex-wrap:wrap; }
+.page-btn { background:transparent; border:1px solid var(--border); color:var(--cream);
+  width:42px; height:42px; border-radius:50%; cursor:pointer; font-size:1.2rem;
+  display:flex; align-items:center; justify-content:center;
+  transition:background 0.2s, border-color 0.2s; }
+.page-btn:hover:not(:disabled) { background:var(--violet); border-color:var(--violet); color:#fff; }
+.page-btn:disabled { opacity:0.3; cursor:not-allowed; }
+.page-indicator { font-family:'JetBrains Mono',monospace; font-size:0.95rem; color:var(--violet2); min-width:120px; text-align:center; }
+.page-jump { display:flex; align-items:center; gap:0.5rem; }
+.page-jump input { width:60px; padding:0.4rem; background:rgba(0,0,0,0.4);
+  border:1px solid var(--border); color:var(--cream); border-radius:2px; text-align:center;
+  font-family:'JetBrains Mono',monospace; }
+.viewer-thumbs { padding:1rem; background:#06060e; border-top:1px solid var(--border);
+  display:flex; gap:0.5rem; overflow-x:auto; }
+.viewer-thumb { flex-shrink:0; width:60px; aspect-ratio:1400/990; cursor:pointer;
+  border:2px solid transparent; border-radius:2px; overflow:hidden;
+  transition:border-color 0.2s, transform 0.2s; opacity:0.5; }
+.viewer-thumb:hover { opacity:0.9; transform:scale(1.05); }
+.viewer-thumb.active { border-color:var(--violet2); opacity:1; }
+.viewer-thumb img { width:100%; height:100%; object-fit:cover; pointer-events:none; -webkit-user-drag:none; }
+
+/* DIPLOMAS */
+.diploma-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));
+  gap:1.5rem; margin-top:2rem; }
+.diploma-card { background:var(--bg3); border:1px solid var(--border); border-radius:4px;
+  overflow:hidden; cursor:pointer; transition:transform 0.3s, box-shadow 0.3s, border-color 0.3s; }
+.diploma-card:hover { transform:translateY(-6px); border-color:var(--violet2); box-shadow:0 14px 30px rgba(124,58,237,0.35); }
+.diploma-img-wrap { aspect-ratio:3/4; overflow:hidden; background:#0a0a14; }
+.diploma-img-wrap img { width:100%; height:100%; object-fit:cover; transition:transform 0.5s; }
+.diploma-card:hover img { transform:scale(1.05); }
+.diploma-body { padding:1rem 1.25rem; }
+.diploma-body h4 { font-family:'Playfair Display',serif; font-size:1rem; color:var(--cream); margin-bottom:0.25rem; }
+.diploma-body .place { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--gold);
+  text-transform:uppercase; letter-spacing:0.1em; }
+.diploma-body p { font-size:0.85rem; color:var(--muted); margin-top:0.5rem; }
+
+/* BOT SECTION */
+.bot-card { display:grid; grid-template-columns:1fr auto; gap:3rem; align-items:center;
+  background:var(--bg3); border:1px solid var(--border); padding:3rem; border-radius:4px; }
+@media(max-width:640px) { .bot-card{grid-template-columns:1fr; text-align:center; justify-items:center;} }
+.bot-card h3 { font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--cream); margin-bottom:1rem; }
+.bot-card p { color:var(--muted); margin-bottom:1.5rem; }
+.bot-link { display:inline-flex; align-items:center; gap:0.5rem; border:1px solid var(--violet);
+  color:var(--violet2); padding:0.75rem 2rem; font-family:'Crimson Pro',serif; font-size:1rem;
+  text-decoration:none; border-radius:2px; letter-spacing:0.05em;
+  transition:background 0.2s, color 0.2s, box-shadow 0.2s; }
+.bot-link:hover { background:var(--violet); color:#fff; box-shadow:0 0 20px rgba(124,58,237,0.4); }
+.qr-real { width:160px; height:160px; padding:8px; background:#fff; border-radius:6px; }
+.qr-real img, .qr-real canvas { width:100%; height:100%; display:block; }
+
+/* COUNTER */
+.counter-box { display:inline-flex; align-items:center; gap:0.75rem; padding:0.6rem 1.2rem;
+  background:rgba(124,58,237,0.1); border:1px solid var(--border); border-radius:24px;
+  font-family:'JetBrains Mono',monospace; font-size:0.85rem; color:var(--cream);
+  margin-top:1.5rem; animation:fadeup 1s 0.6s ease both; }
+.counter-box .dot { width:8px; height:8px; border-radius:50%; background:var(--violet2);
+  box-shadow:0 0 8px var(--violet2); animation:dotpulse 1.5s ease-in-out infinite; }
+@keyframes dotpulse { 0%,100%{opacity:1; transform:scale(1)} 50%{opacity:0.5; transform:scale(0.7)} }
+.counter-value { color:var(--violet2); font-weight:700; }
+
+/* FOOTER */
+footer { border-top:1px solid var(--border); padding:3rem 0; text-align:center; color:var(--muted); font-size:0.9rem; }
+footer strong { color:var(--violet2); }
+.footer-divider { width:60px; height:1px; background:var(--violet); opacity:0.3; margin:1rem auto; }
+
+.reveal { opacity:0; transform:translateY(30px); transition:opacity 0.7s ease, transform 0.7s ease; }
+.reveal.visible { opacity:1; transform:translateY(0); }
+.glow-line { width:100%; height:1px; margin:3rem 0;
+  background:linear-gradient(90deg, transparent, var(--violet), transparent); animation:glowpulse 3s ease-in-out infinite; }
+@keyframes glowpulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
+
+/* LIGHTBOX */
+.lightbox { position:fixed; inset:0; background:rgba(6,6,14,0.96); z-index:9999;
+  display:none; align-items:center; justify-content:center; padding:2rem;
+  cursor:zoom-out; animation:fadeup 0.3s ease; }
+.lightbox.show { display:flex; }
+.lightbox img { max-width:95vw; max-height:95vh; border-radius:4px;
+  box-shadow:0 25px 60px rgba(124,58,237,0.5); border:1px solid var(--border); }
+.lightbox-close { position:absolute; top:1.5rem; right:1.5rem; background:rgba(124,58,237,0.2);
+  border:1px solid var(--violet); color:var(--cream); width:40px; height:40px; border-radius:50%;
+  font-size:1.5rem; cursor:pointer; transition:background 0.2s; }
+.lightbox-close:hover { background:var(--violet); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">&#9836; Hydraulos</div>
+  <a href="#history">История</a>
+  <a href="#anatomy">Строение</a>
+  <a href="#physics">Физика</a>
+  <a href="#kuzbass">Кузбасс</a>
+  <a href="#calculator">Калькулятор</a>
+  <a href="#metodichka">Методичка</a>
+  <a href="#gallery">Эксперимент</a>
+  <a href="#achievements">Дипломы</a>
+  <a href="#bot">Бот</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-bg"></div>
+  <div class="particles" id="particles"></div>
+  <div class="hero-pipes" id="heroPipes"></div>
+  <span class="hero-eyebrow">Исследовательский проект · Физика · 2026</span>
+  <h1>Орган —<em>Король</em></h1>
+  <h1 style="font-size:clamp(1.4rem,3.5vw,3rem); color:var(--muted); margin-top:0.5rem; font-family:'Playfair Display',serif">музыкальных инструментов</h1>
+  <div class="hero-divider"></div>
+  <p class="hero-sub">Калибровочная модель настройки органных труб. Физика звука, история инструмента и онлайн-калькулятор.</p>
+  <div class="counter-box">
+    <span class="dot"></span>
+    <span>Посещений: <span class="counter-value" id="visitCounter">…</span></span>
+  </div>
+  <div class="scroll-hint">Листайте вниз</div>
+</section>
+
+<!-- HISTORY -->
+<section id="history">
+  <div class="container">
+    <span class="section-label">Раздел I</span>
+    <h2 class="section-title">История <em>органа</em></h2>
+    <p class="lead">28 веков эволюции — от тростниковой флейты Пана до цифровых инструментов XXI века.</p>
+    <div class="timeline" id="timeline"></div>
+  </div>
+</section>
+
+<!-- ANATOMY -->
+<section id="anatomy">
+  <div class="container">
+    <span class="section-label">Раздел II</span>
+    <h2 class="section-title">Строение <em>органа</em></h2>
+    <p class="lead">Единственный инструмент, резонатором которого служит само помещение. Ближайшие родственники — флейта и баян.</p>
+    <div class="anatomy-grid">
+      <div class="anatomy-card"><span class="anatomy-icon">🎹</span><h3>Мануалы</h3><p>Несколько клавиатур для рук. Чаще 2–4 мануала. Каждый управляет своей группой труб с особым тембром.</p></div>
+      <div class="anatomy-card"><span class="anatomy-icon">🦶</span><h3>Педальная клавиатура</h3><p>Ножная клавиатура для управления басовыми трубами. Исполнитель нажимает педали ногами.</p></div>
+      <div class="anatomy-card"><span class="anatomy-icon">🎚️</span><h3>Регистры</h3><p>Группы труб со схожим тембром. Включаются рычагами или кнопками на пульте.</p></div>
+      <div class="anatomy-card"><span class="anatomy-icon">📯</span><h3>Трубы</h3><p>Металлические, деревянные и комбинированные разной длины и диаметра. Легко повреждаются.</p></div>
+      <div class="anatomy-card"><span class="anatomy-icon">⚙️</span><h3>Трактура</h3><p>Система передачи сигналов от мануалов к трубам. Бывает механической, пневматической или электрической.</p></div>
+      <div class="anatomy-card"><span class="anatomy-icon">🎛️</span><h3>Швеллер</h3><p>Регулирует громкость, открывая или закрывая жалюзи ящика с трубами. Позволяет делать крещендо.</p></div>
+    </div>
+    <div class="glow-line"></div>
+    <h3 style="font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--cream); margin-bottom:2rem">Разновидности труб</h3>
+    <div class="anatomy-grid">
+      <div class="anatomy-card"><span class="anatomy-icon">🔓</span><h3>Открытые</h3><p>Оба конца открыты. f = v/(2L). Богатый обертональный состав. На октаву выше закрытых.</p></div>
+      <div class="anatomy-card"><span class="anatomy-icon">🔒</span><h3>Закрытые</h3><p>Один конец заглушён. f = v/(4L). На октаву ниже открытых. Только нечётные гармоники.</p></div>
+      <div class="anatomy-card"><span class="anatomy-icon">💋</span><h3>Лабиальные</h3><p>Звук от удара воздуха о лабиум. Мягкий флейтовый тембр.</p></div>
+      <div class="anatomy-card"><span class="anatomy-icon">〰️</span><h3>Язычковые</h3><p>Звук от вибрирующей металлической пластины. Яркий резкий тембр.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PHYSICS -->
+<section id="physics">
+  <div class="container">
+    <span class="section-label">Раздел III</span>
+    <h2 class="section-title">Физика <em>звука</em></h2>
+    <p class="lead">Почему упрощённая формула f = v/(4L) даёт погрешность до 40% — и как её устранить.</p>
+    <div class="formula-block reveal">
+      <p style="font-size:0.8rem; color:var(--muted); letter-spacing:0.2em; text-transform:uppercase; margin-bottom:0.5rem">Калибровочная модель</p>
+      <div class="formula-main">L = (1 + p/98 000) · (82 875 + 150·T) / f − 0.3·d</div>
+      <div class="formula-params">
+        <div class="param-item"><span class="param-key">L</span><span class="param-desc">длина трубы (мм)</span></div>
+        <div class="param-item"><span class="param-key">T</span><span class="param-desc">температура воздуха (°C)</span></div>
+        <div class="param-item"><span class="param-key">f</span><span class="param-desc">частота ноты (Гц)</span></div>
+        <div class="param-item"><span class="param-key">p</span><span class="param-desc">давление воздуха (Па)</span></div>
+        <div class="param-item"><span class="param-key">d</span><span class="param-desc">диаметр трубы (мм)</span></div>
+      </div>
+    </div>
+    <div class="anatomy-grid" style="margin-top:2rem">
+      <div class="anatomy-card reveal"><span class="anatomy-icon">🌡️</span><h3>Температура</h3><p>v = 331,5 + 0,6·T. При T=20°C: v=343,5 м/с. Каждый градус добавляет 150 мм/с к скорости.</p></div>
+      <div class="anatomy-card reveal"><span class="anatomy-icon">💧</span><h3>Давление</h3><p>При увеличении давления частота немного растёт. Коэффициент 1/98 000 — каждые 980 Па дают +1%.</p></div>
+      <div class="anatomy-card reveal"><span class="anatomy-icon">📐</span><h3>Концевая поправка</h3><p>По Рэлею: ΔL = 0,3·d. Для d=20 мм поправка составляет 6 мм. Воздух колеблется за трубой.</p></div>
+      <div class="anatomy-card reveal"><span class="anatomy-icon">✅</span><h3>Точность</h3><p>Упрощённая формула: погрешность 30–40%. Калибровочная модель: ±2–3 Гц. Проверено экспериментально.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- KUZBASS -->
+<section id="kuzbass">
+  <div class="container">
+    <span class="section-label">Раздел IV</span>
+    <h2 class="section-title">Органы <em>Кузбасса</em></h2>
+    <p class="lead">От немецкого мастерства 1983 года до цифровых технологий XXI века.</p>
+    <div class="kuzbass-card reveal">
+      <div style="display:flex; flex-direction:column; gap:1.5rem">
+        <div><div class="stat-value">1983</div><div class="stat-label">Год установки органа Зауэр</div></div>
+        <div><div class="stat-value">«Зауэр»</div><div class="stat-label">Франкфурт, Германия</div></div>
+        <div><div class="stat-value">№1</div><div class="stat-label">Один из лучших органов за Уралом</div></div>
+      </div>
+      <div class="kuzbass-text">
+        <h3>Государственная филармония Кузбасса</h3>
+        <p>Механический орган фирмы Wilhelm Sauer установлен в октябре 1983 года. Требует регулярной настройки с приглашением специалистов из Германии.</p>
+        <p>Именно эта проблема — высокая стоимость настройки — стала отправной точкой данного проекта.</p>
+        <p>В 2024 году приобретён цифровой орган — аналог механического Sonus Paradisi из Роттердама с 7600 записанными звуками.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CALCULATOR -->
+<section id="calculator">
+  <div class="container">
+    <span class="section-label">Раздел V</span>
+    <h2 class="section-title"><em>Калькулятор</em> длины трубы</h2>
+    <p class="lead">Введите параметры — получите точную длину органной трубы для нужной ноты.</p>
+    <div class="calc-wrapper reveal">
+      <div class="calc-header">
+        <h3>Hydraulos Calculator</h3>
+        <span class="calc-formula-tag">L=(1+p/98000)·(82875+150T)/f−0.3d</span>
+      </div>
+      <div class="calc-body">
+        <div class="calc-grid">
+          <div class="field-group"><label class="field-label"><span>f</span> — Нота</label><select id="noteSelect"></select></div>
+          <div class="field-group"><label class="field-label"><span>d</span> — Диаметр (мм)</label><input type="number" id="diameter" value="20" min="5" max="100" step="0.5"></div>
+          <div class="field-group"><label class="field-label"><span>T</span> — Температура (°C)</label><input type="number" id="temperature" value="20" min="-20" max="50" step="0.5"></div>
+          <div class="field-group"><label class="field-label"><span>p</span> — Давление (Па)</label><input type="number" id="pressure" value="1000" min="0" max="50000" step="100"></div>
+        </div>
+        <button class="calc-btn" onclick="calculate()">Рассчитать длину трубы</button>
+        <div class="calc-result" id="calcResult">
+          <div class="result-main" id="resultMain"></div>
+          <div class="result-sub" id="resultSub"></div>
+          <div class="result-details" id="resultDetails"></div>
+        </div>
+      </div>
+    </div>
+    <div class="keyboard-section reveal">
+      <h3>Интерактивная клавиатура</h3>
+      <p class="keyboard-sub">Нажмите на клавишу — услышите звук органной трубы</p>
+      <div class="keyboard-wrap">
+        <div class="keyboard" id="keyboard"></div>
+      </div>
+      <div class="playing-note" id="playingNote">Нажмите на клавишу...</div>
+    </div>
+  </div>
+</section>
+
+<!-- METODICHKA -->
+<section id="metodichka">
+  <div class="container">
+    <span class="section-label">Раздел VI</span>
+    <h2 class="section-title">Методическое <em>пособие</em></h2>
+    <p class="lead">Практическое руководство по настройке органных труб с подробным разбором калибровочной модели.</p>
+    <div class="metodichka-intro reveal">
+      <img src="images/metodichka_cover.jpg" alt="Обложка методички" class="metodichka-cover" loading="lazy">
+      <div class="metodichka-info">
+        <h3>Методическое пособие по настройке органных труб</h3>
+        <div class="pages">Универсальная калибровочная модель · 19 страниц · 2026</div>
+        <p>Пособие содержит 10 глав: теорию образования звука, разбор универсальной формулы, пошаговую инструкцию по настройке, использование Telegram-бота, готовые таблицы длин труб, типичные ошибки и советы.</p>
+        <button class="btn-primary" onclick="openViewer()">📖 Читать методичку</button>
+      </div>
+    </div>
+
+    <div class="viewer" id="metodichkaViewer">
+      <div class="viewer-header">
+        <span class="viewer-title">Методическое пособие по настройке органных труб</span>
+        <span class="viewer-protected">Авторские права защищены</span>
+      </div>
+      <div class="viewer-body">
+        <div class="viewer-stage" oncontextmenu="return false">
+          <img id="viewerPage" class="viewer-page" src="images/metodichka_pages/page_01.jpg" alt="Страница методички" draggable="false" oncontextmenu="return false">
+          <div class="viewer-overlay" oncontextmenu="return false" ondragstart="return false"></div>
+        </div>
+      </div>
+      <div class="viewer-controls">
+        <button class="page-btn" id="prevBtn" onclick="prevPage()">‹</button>
+        <div class="page-indicator"><span id="curPage">1</span> / <span id="totalPages">19</span></div>
+        <button class="page-btn" id="nextBtn" onclick="nextPage()">›</button>
+        <div class="page-jump">
+          <span style="color:var(--muted); font-size:0.85rem">Стр.</span>
+          <input type="number" id="pageJump" min="1" max="19" value="1" onchange="jumpToPage(this.value)">
+        </div>
+      </div>
+      <div class="viewer-thumbs" id="viewerThumbs"></div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY (Experiment) -->
+<section id="gallery">
+  <div class="container-wide">
+    <span class="section-label">Раздел VII</span>
+    <h2 class="section-title">Эксперимент и <em>гидравлос</em></h2>
+    <p class="lead">Самодельный гидравлос — экспериментальная установка для проверки калибровочной модели.</p>
+    <div class="gallery-grid" id="calibGallery"></div>
+    
+    <div class="glow-line"></div>
+    
+    <h3 style="font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--cream); margin-bottom:1rem">Видео проекта</h3>
+    <p style="color:var(--muted); font-style:italic; margin-bottom:1.5rem">Николай играет на органе и анимация устройства гидравлоса</p>
+    <div class="video-grid">
+      <div class="video-card">
+        <video controls preload="metadata" playsinline poster="">
+          <source src="videos/04_nikolay_organ_1.mp4" type="video/mp4">
+        </video>
+        <div class="video-card-body">
+          <h4>Николай играет на органе</h4>
+          <p>Фрагмент исполнения</p>
+        </div>
+      </div>
+      <div class="video-card">
+        <video controls preload="metadata" playsinline poster="">
+          <source src="videos/05_nikolay_organ_2.mp4" type="video/mp4">
+        </video>
+        <div class="video-card-body">
+          <h4>Игра на органе — полное</h4>
+          <p>1 мин 39 сек</p>
+        </div>
+      </div>
+      <div class="video-card">
+        <video controls preload="metadata" playsinline poster="">
+          <source src="videos/01_hydraulos_animation.mp4" type="video/mp4">
+        </video>
+        <div class="video-card-body">
+          <h4>Анимация гидравлоса</h4>
+          <p>Принцип работы древнего органа</p>
+        </div>
+      </div>
+      <div class="video-card">
+        <video controls preload="metadata" playsinline poster="">
+          <source src="videos/02_panflute_play.mp4" type="video/mp4">
+        </video>
+        <div class="video-card-body">
+          <h4>Игра на флейте Пана</h4>
+          <p>Прародитель органа</p>
+        </div>
+      </div>
+      <div class="video-card">
+        <video controls preload="metadata" playsinline poster="">
+          <source src="videos/03_church_organ.mp4" type="video/mp4">
+        </video>
+        <div class="video-card-body">
+          <h4>Орган в храме</h4>
+          <p>Звучание церковного органа</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="glow-line"></div>
+
+    <h3 style="font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--cream); margin-bottom:1rem">Галерея проекта</h3>
+    <p style="color:var(--muted); font-style:italic; margin-bottom:1.5rem">Иллюстрации к истории органа из презентаций</p>
+    <div class="gallery-grid" id="histGallery"></div>
+  </div>
+</section>
+
+<!-- ACHIEVEMENTS -->
+<section id="achievements">
+  <div class="container">
+    <span class="section-label">Раздел VIII</span>
+    <h2 class="section-title">Награды <em>проекта</em></h2>
+    <p class="lead">Проект отмечен на трёх научных конкурсах разного уровня.</p>
+    <div class="diploma-grid">
+      <div class="diploma-card" onclick="openLightbox('images/diplomas/diploma-kuzgtu.jpg')">
+        <div class="diploma-img-wrap"><img src="images/diplomas/diploma-kuzgtu.jpg" alt="Диплом КузГТУ" loading="lazy"></div>
+        <div class="diploma-body">
+          <div class="place">I место</div>
+          <h4>КузГТУ им. Т.Ф.Горбачёва</h4>
+          <p>Конкурс на лучший исследовательский проект, секция «Физика». Кемерово, 2026.</p>
+        </div>
+      </div>
+      <div class="diploma-card" onclick="openLightbox('images/diplomas/diploma-sirius.jpg')">
+        <div class="diploma-img-wrap"><img src="images/diplomas/diploma-sirius.jpg" alt="Диплом Сириус" loading="lazy"></div>
+        <div class="diploma-body">
+          <div class="place">III степень</div>
+          <h4>Конференция «Диалог»</h4>
+          <p>Всероссийская научно-практическая конференция, Сириус.Кузбасс, 2026.</p>
+        </div>
+      </div>
+      <div class="diploma-card" onclick="openLightbox('images/diplomas/diploma-kuzgtu-2.jpg')">
+        <div class="diploma-img-wrap"><img src="images/diplomas/diploma-kuzgtu-2.jpg" alt="Диплом Сибстрин" loading="lazy"></div>
+        <div class="diploma-body">
+          <div class="place">I место</div>
+          <h4>НГАСУ (Сибстрин)</h4>
+          <p>XIII научный конкурс «Развитие инженерной мысли», секция инженерных задач. Новосибирск, 2026.</p>
+        </div>
+      </div>
+      <div class="diploma-card" onclick="openLightbox('images/diplomas/diploma-granpri.jpg')">
+        <div class="diploma-img-wrap"><img src="images/diplomas/diploma-granpri.jpg" alt="Гран-при" loading="lazy"></div>
+        <div class="diploma-body">
+          <div class="place">Гран-при</div>
+          <h4>«Наследие и новаторство»</h4>
+          <p>I Региональная научно-творческая конференция ДШИ и ДМШ. Кемерово, 2026.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOT -->
+<section id="bot">
+  <div class="container">
+    <span class="section-label">Раздел IX</span>
+    <h2 class="section-title">Telegram-бот <em>Hydraulos</em></h2>
+    <p class="lead">Калькулятор доступен всем в Telegram — отсканируйте QR-код или перейдите по ссылке.</p>
+    <div class="bot-card reveal">
+      <div>
+        <h3>Hydraulos Calculator</h3>
+        <p>Бот рассчитывает длину органной трубы прямо в Telegram. Выберите ноту, введите параметры — точный результат ±2–3 мм.</p>
+        <p style="font-size:0.9rem">Работает 24/7 на сервере Railway. Не требует установки.</p>
+        <a href="https://t.me/hydraulos_calc_2026_bot" target="_blank" class="bot-link">&#9992; Открыть в Telegram</a>
+      </div>
+      <div class="qr-real"><canvas id="botQR"></canvas></div>
+    </div>
+    
+    <div style="margin-top:3rem; text-align:center" class="reveal">
+      <h3 style="font-family:'Playfair Display',serif; font-size:1.3rem; color:var(--cream); margin-bottom:0.5rem">QR-код на этот сайт</h3>
+      <p style="color:var(--muted); font-style:italic; margin-bottom:1.5rem; font-size:0.95rem">Поделитесь сайтом — наведите камеру телефона</p>
+      <div class="qr-real" style="margin:0 auto"><canvas id="siteQR"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div style="font-family:'Playfair Display',serif; font-size:1.5rem; color:var(--violet2); margin-bottom:0.5rem">&#9836;</div>
+    <strong>Галузий Николай</strong>
+    <div class="footer-divider"></div>
+    <p style="font-size:0.85rem">Проект «Калибровочная модель настройки органных труб»<br>2026</p>
+  </div>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">×</button>
+  <img id="lightboxImg" src="" alt="" onclick="event.stopPropagation()">
+</div>
+
+<!-- QRCode library -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+
+<script>
+// ── ЗАЩИТА ОТ КОПИРОВАНИЯ ──
+// Блокируем правый клик
+document.addEventListener('contextmenu', e => {
+  if(e.target.tagName === 'IMG' || e.target.classList.contains('viewer-overlay') ||
+     e.target.closest('.viewer') || e.target.closest('.metodichka-intro')){
+    e.preventDefault();
+    return false;
+  }
+});
+// Блокируем перетаскивание изображений
+document.addEventListener('dragstart', e => {
+  if(e.target.tagName === 'IMG') { e.preventDefault(); return false; }
+});
+// Блокируем сочетания клавиш для сохранения / печати / DevTools (защита базовая)
+document.addEventListener('keydown', e => {
+  // Ctrl+S, Ctrl+P, Ctrl+U, F12, Ctrl+Shift+I, Ctrl+Shift+C
+  if((e.ctrlKey || e.metaKey) && ['s','p','u'].includes(e.key.toLowerCase())) {
+    e.preventDefault(); return false;
+  }
+  if(e.key === 'F12') { e.preventDefault(); return false; }
+  if((e.ctrlKey || e.metaKey) && e.shiftKey && ['i','c','j'].includes(e.key.toLowerCase())) {
+    e.preventDefault(); return false;
+  }
+  // Ctrl+A — выделить всё
+  if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'a') {
+    if(!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) {
+      e.preventDefault(); return false;
+    }
+  }
+  // Ctrl+C — копировать (только разрешим в input полях)
+  if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c') {
+    if(!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) {
+      e.preventDefault(); return false;
+    }
+  }
+});
+
+// ── ПРОСМОТРЩИК МЕТОДИЧКИ ──
+const TOTAL_PAGES = 19;
+let currentPage = 1;
+const viewer = document.getElementById('metodichkaViewer');
+const viewerPage = document.getElementById('viewerPage');
+const curPageEl = document.getElementById('curPage');
+const pageJumpEl = document.getElementById('pageJump');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+
+function openViewer(){
+  viewer.classList.add('show');
+  setTimeout(() => viewer.scrollIntoView({behavior:'smooth', block:'start'}), 100);
+  loadPage(1);
+  buildThumbs();
+}
+
+function loadPage(n){
+  if(n < 1 || n > TOTAL_PAGES) return;
+  currentPage = n;
+  const num = String(n).padStart(2, '0');
+  viewerPage.src = `images/metodichka_pages/page_${num}.jpg`;
+  curPageEl.textContent = n;
+  pageJumpEl.value = n;
+  prevBtn.disabled = (n === 1);
+  nextBtn.disabled = (n === TOTAL_PAGES);
+  // Обновить активный thumbnail
+  document.querySelectorAll('.viewer-thumb').forEach((t, i) => {
+    t.classList.toggle('active', i+1 === n);
+  });
+  // Прокрутить активный thumbnail в видимую область
+  const activeThumb = document.querySelector('.viewer-thumb.active');
+  if(activeThumb) activeThumb.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
+}
+
+function nextPage(){ loadPage(currentPage + 1); }
+function prevPage(){ loadPage(currentPage - 1); }
+function jumpToPage(n){
+  n = parseInt(n);
+  if(isNaN(n) || n < 1 || n > TOTAL_PAGES) {
+    pageJumpEl.value = currentPage;
+    return;
+  }
+  loadPage(n);
+}
+
+function buildThumbs(){
+  const thumbsEl = document.getElementById('viewerThumbs');
+  if(thumbsEl.children.length > 0) return; // уже построены
+  for(let i = 1; i <= TOTAL_PAGES; i++){
+    const num = String(i).padStart(2, '0');
+    const t = document.createElement('div');
+    t.className = 'viewer-thumb' + (i === 1 ? ' active' : '');
+    t.onclick = () => loadPage(i);
+    t.innerHTML = `<img src="images/metodichka_pages/page_${num}.jpg" alt="Стр ${i}" loading="lazy" draggable="false">`;
+    thumbsEl.appendChild(t);
+  }
+}
+
+// Клавиши ← → для перелистывания
+document.addEventListener('keydown', e => {
+  if(!viewer.classList.contains('show')) return;
+  if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
+  if(e.key === 'ArrowLeft') prevPage();
+  if(e.key === 'ArrowRight') nextPage();
+});
+
+// ── AUDIO ──
+let audioCtx = null;
+function getAudio(){
+  if(!audioCtx) audioCtx = new(window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==='suspended') audioCtx.resume();
+  return audioCtx;
+}
+function playOrgan(freq, dur=1.4){
+  const ctx = getAudio(), t = ctx.currentTime;
+  const g = ctx.createGain();
+  g.connect(ctx.destination);
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(0.18, t+0.08);
+  g.gain.exponentialRampToValueAtTime(0.001, t+dur);
+  [1,3,5,7].forEach((h,i) => {
+    const o = ctx.createOscillator(), hg = ctx.createGain();
+    o.type = 'sine'; o.frequency.value = freq*h;
+    hg.gain.value = 0.5/(i*2+1);
+    o.connect(hg); hg.connect(g);
+    o.start(t); o.stop(t+dur);
+  });
+}
+function playInstrument(type){
+  const ctx = getAudio(), t = ctx.currentTime;
+  if(type==='siringa'){
+    [523,659,784,880].forEach((f,i) => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type='sine'; o.frequency.value=f;
+      g.gain.setValueAtTime(0, t+i*0.3);
+      g.gain.linearRampToValueAtTime(0.12, t+i*0.3+0.1);
+      g.gain.exponentialRampToValueAtTime(0.001, t+i*0.3+0.9);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(t+i*0.3); o.stop(t+i*0.3+0.9);
+    });
+  } else if(type==='hydraulos'){
+    [130.8,164.8,196,261.6].forEach(f => {
+      const o = ctx.createOscillator(), g = ctx.createGain(), fl = ctx.createBiquadFilter();
+      o.type='sawtooth'; o.frequency.value=f;
+      fl.type='lowpass'; fl.frequency.value=700;
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.06, t+0.15);
+      g.gain.exponentialRampToValueAtTime(0.001, t+2.2);
+      o.connect(fl); fl.connect(g); g.connect(ctx.destination);
+      o.start(t); o.stop(t+2.2);
+    });
+  } else if(type==='volynka'){
+    const d = ctx.createOscillator(), dg = ctx.createGain();
+    d.type='sawtooth'; d.frequency.value=110;
+    dg.gain.setValueAtTime(0.05, t); dg.gain.exponentialRampToValueAtTime(0.001, t+3.5);
+    d.connect(dg); dg.connect(ctx.destination); d.start(t); d.stop(t+3.5);
+    [440,494,523,587,659,587,523,440].forEach((f,i) => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type='sawtooth'; o.frequency.value=f;
+      g.gain.setValueAtTime(0.09, t+i*0.32); g.gain.exponentialRampToValueAtTime(0.001, t+i*0.32+0.28);
+      o.connect(g); g.connect(ctx.destination); o.start(t+i*0.32); o.stop(t+i*0.32+0.28);
+    });
+  } else {
+    [131,165,196,262,330,392].forEach(f => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type='sine'; o.frequency.value=f;
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.07, t+0.12);
+      g.gain.exponentialRampToValueAtTime(0.001, t+2.5);
+      o.connect(g); g.connect(ctx.destination); o.start(t); o.stop(t+2.5);
+    });
+  }
+}
+
+// ── HISTORY ──
+const historyData = [
+  { year:'~ VIII век до н.э.', title:'Флейта Пана (Сиринга)',
+    text:'Пан срезал тростник разной длины и скрепил его — появился инструмент с несколькими трубами разной высоты звука. Прародитель всех органных инструментов.',
+    photos:['images/history/hist_02.jpg','images/history/hist_05.jpg','images/history/hist_03.jpg','images/history/hist_04.jpg'],
+    sound:'siringa', label:'▶ Флейта Пана' },
+  { year:'~ II век до н.э.', title:'Гидравлос — первый орган',
+    text:'Греческий мастер Ктесибий из Александрии изобрёл водяной орган. Давление воздуха стабилизировалось водой. 3–4 регистра по 7–18 труб.',
+    photos:['images/history/hist_06.jpg','images/history/hist_07.jpg','images/history/hist_08.jpg'],
+    video:'videos/01_hydraulos_animation.mp4',
+    sound:'hydraulos', label:'▶ Гидравлос' },
+  { year:'~ I век н.э.', title:'Меховой орган и Волынка',
+    text:'Водяной насос заменили воздушными мехами. Специально обученные люди — кальканты — накачивали воздух ногами. Волынка — ещё один предок органа.',
+    photos:['images/history/hist_09.jpg','images/history/hist_10.jpg','images/history/hist_11.jpg'],
+    sound:'volynka', label:'▶ Волынка' },
+  { year:'666 год', title:'Орган в церкви',
+    text:'Папа Виталиан ввёл орган в католическое богослужение. Клавиши размером 5–7 см — играли кулаками. В Испании из-за громкости использовали только по большим праздникам.',
+    photos:['images/history/hist_12.jpg','images/history/hist_13.jpg','images/history/hist_14.jpg'],
+    sound:'organ', label:'▶ Средневековый орган' },
+  { year:'XIV–XVI века', title:'Позитив и органетто',
+    text:'Клавиши уменьшились, появилась педальная клавиатура. Маленький переносной органетто и стационарный позитив распространились по всей Европе.',
+    photos:['images/history/hist_15.jpg','images/history/hist_16.jpg','images/history/hist_17.jpg'],
+    sound:'organ', label:'▶ Позитив' },
+  { year:'XVII–XVIII века', title:'Золотой век — эпоха Барокко',
+    text:'Наибольшего расцвета органостроение достигло в Германии. И.С.Бах, Букстехуде, Гендель создали великие произведения. Каждый инструмент — произведение архитектурного искусства.',
+    photos:['images/history/hist_18.jpg','images/history/hist_19.jpg','images/history/hist_20.jpg'],
+    sound:'organ', label:'▶ Барочный орган' },
+  { year:'XIX–XX века', title:'Современные органы',
+    text:'Электрические и цифровые органы. Орган Хаммонда, Телармониум, орган в зале Бордуок (Атлантик-Сити) — крупнейший в мире.',
+    photos:['images/history/hist_21.jpg','images/history/hist_22.jpg','images/history/hist_23.jpg','images/history/hist_24.jpg'],
+    sound:'organ', label:'▶ Современный орган' },
+  { year:'1983 год', title:'Орган «Зауэр» в Кемерово',
+    text:'Мастера франкфуртской фирмы Wilhelm Sauer установили механический орган в Государственной филармонии Кузбасса. Один из лучших органов за Уралом.',
+    photos:['images/history/hist_25.jpg','images/history/hist_26.jpg','images/history/hist_27.jpg'],
+    video:'videos/03_church_organ.mp4',
+    sound:'organ', label:'▶ Орган Зауэр' },
+  { year:'2026', title:'Игра на органе сегодня',
+    text:'Николай играет на цифровом органе в Кемерово. Этот же интерес к инструменту привёл к исследовательскому проекту по калибровке труб.',
+    photos:[],
+    video:'videos/05_nikolay_organ_2.mp4',
+    sound:'organ', label:'▶ Орган' },
+];
+
+const tl = document.getElementById('timeline');
+historyData.forEach((item, idx) => {
+  const div = document.createElement('div');
+  div.className = 'timeline-item';
+  let mediaHtml = '';
+  if(item.video){
+    mediaHtml += `<video class="tl-video" controls preload="metadata" playsinline><source src="${item.video}" type="video/mp4"></video>`;
+  }
+  if(item.photos && item.photos.length){
+    mediaHtml += '<div class="tl-photos">';
+    item.photos.forEach(p => {
+      mediaHtml += `<img src="${p}" alt="" loading="lazy" onclick="openLightbox('${p}')">`;
+    });
+    mediaHtml += '</div>';
+  }
+  div.innerHTML = `
+    <div class="timeline-header" onclick="toggleTL(${idx})">
+      <span class="timeline-year">${item.year}</span>
+      <h3>${item.title}</h3>
+      <div class="tl-toggle">+</div>
+    </div>
+    <div class="timeline-body">
+      <div class="tl-inner">
+        <div class="tl-content">
+          <div>
+            <p>${item.text}</p>
+            <button class="listen-btn" onclick="listenInstr(event,'${item.sound}',this)">${item.label}</button>
+          </div>
+        </div>
+        ${mediaHtml}
+      </div>
+    </div>`;
+  tl.appendChild(div);
+});
+
+function toggleTL(idx){
+  const items = document.querySelectorAll('.timeline-item');
+  const isOpen = items[idx].classList.contains('open');
+  items.forEach(i => i.classList.remove('open'));
+  if(!isOpen) items[idx].classList.add('open');
+}
+
+let curBtn = null, listenTmr = null;
+function listenInstr(e, type, btn){
+  e.stopPropagation();
+  if(curBtn) curBtn.classList.remove('playing');
+  if(curBtn===btn){ curBtn=null; return; }
+  btn.classList.add('playing'); curBtn=btn;
+  playInstrument(type);
+  clearTimeout(listenTmr);
+  listenTmr = setTimeout(() => {
+    btn.classList.remove('playing');
+    if(curBtn===btn) curBtn=null;
+  }, 3500);
+}
+
+// ── ГАЛЕРЕИ ──
+const calibPhotos = Array.from({length:18}, (_,i) => `images/calibration/calib_${String(i+1).padStart(2,'0')}.jpg`);
+// Галерея истории — оставшиеся фото истории (hist_28..70) + современные органы (mod_01..25)
+const histPhotos = [
+  ...Array.from({length:43}, (_,i) => `images/history/hist_${String(28+i).padStart(2,'0')}.jpg`),
+  ...Array.from({length:25}, (_,i) => `images/history/mod_${String(i+1).padStart(2,'0')}.jpg`)
+];
+
+function buildGallery(elId, photos){
+  const el = document.getElementById(elId);
+  photos.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'gallery-item';
+    div.onclick = () => openLightbox(p);
+    div.innerHTML = `<img src="${p}" alt="" loading="lazy" onerror="this.parentElement.style.display='none'">`;
+    el.appendChild(div);
+  });
+}
+buildGallery('calibGallery', calibPhotos);
+buildGallery('histGallery', histPhotos);
+
+// ── LIGHTBOX ──
+function openLightbox(src){
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightbox').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox(){
+  document.getElementById('lightbox').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+// ── КАЛЬКУЛЯТОР ──
+const allNotes = [
+  {name:'До₁',freq:32.70},{name:'Ре₁',freq:36.71},{name:'Ми₁',freq:41.20},
+  {name:'Фа₁',freq:43.65},{name:'Соль₁',freq:49.00},{name:'Ля₁',freq:55.00},
+  {name:'Си₁',freq:61.74},{name:'До₂',freq:65.41},{name:'Ре₂',freq:73.42},
+  {name:'Ми₂',freq:82.41},{name:'Фа₂',freq:87.31},{name:'Соль₂',freq:98.00},
+  {name:'Ля₂',freq:110.00},{name:'Си₂',freq:123.47},{name:'До₃',freq:130.81},
+  {name:'Ре₃',freq:146.83},{name:'Ми₃',freq:164.81},{name:'Фа₃',freq:174.61},
+  {name:'Соль₃',freq:196.00},{name:'Ля₃',freq:220.00},{name:'Си₃',freq:246.94},
+  {name:'До₄',freq:261.63},{name:'Ре₄',freq:293.66},{name:'Ми₄',freq:329.63},
+  {name:'Фа₄',freq:349.23},{name:'Соль₄',freq:392.00},{name:'Ля₄',freq:440.00},
+  {name:'Си₄',freq:493.88},{name:'До₅',freq:523.25},{name:'Ре₅',freq:587.33},
+  {name:'Ми₅',freq:659.26},{name:'Фа₅',freq:698.46},{name:'Соль₅',freq:783.99},
+  {name:'Ля₅',freq:880.00},
+];
+const sel = document.getElementById('noteSelect');
+allNotes.forEach(n => {
+  const o = document.createElement('option');
+  o.value = n.freq;
+  o.textContent = `${n.name} — ${n.freq} Гц`;
+  if(n.freq===440) o.selected = true;
+  sel.appendChild(o);
+});
+
+function calculate(){
+  const f = parseFloat(sel.value),
+        d = parseFloat(document.getElementById('diameter').value),
+        T = parseFloat(document.getElementById('temperature').value),
+        p = parseFloat(document.getElementById('pressure').value);
+  if([f,d,T,p].some(isNaN)) return;
+  const speed = 82875 + 150*T;
+  const pC = 1 + p/98000;
+  const ec = 0.3*d;
+  const L = speed*pC/f - ec;
+  const nm = sel.options[sel.selectedIndex].text.split('—')[0].trim();
+  document.getElementById('resultMain').textContent = L.toFixed(1) + ' мм';
+  document.getElementById('resultSub').textContent = 'Длина трубы для ноты ' + nm;
+  document.getElementById('resultDetails').innerHTML =
+    `<div class="detail-line">Скорость звука: <span>${speed.toFixed(0)} мм/с</span></div>
+     <div class="detail-line">Поправка давления: <span>×${pC.toFixed(5)}</span></div>
+     <div class="detail-line">Концевая поправка: <span>−${ec.toFixed(1)} мм</span></div>
+     <div class="detail-line">Точность: <span>±2–3 мм</span></div>`;
+  document.getElementById('calcResult').classList.add('show');
+  playOrgan(f, 1.5);
+}
+
+// ── КЛАВИАТУРА ──
+const whites = [
+  {n:'До₄',f:261.63},{n:'Ре₄',f:293.66},{n:'Ми₄',f:329.63},{n:'Фа₄',f:349.23},
+  {n:'Соль₄',f:392.00},{n:'Ля₄',f:440.00},{n:'Си₄',f:493.88},
+  {n:'До₅',f:523.25},{n:'Ре₅',f:587.33},{n:'Ми₅',f:659.26},{n:'Фа₅',f:698.46},
+  {n:'Соль₅',f:783.99},{n:'Ля₅',f:880.00},{n:'Си₅',f:987.77},
+];
+const blacks = [
+  {n:'До#₄',f:277.18,wi:0},{n:'Ре#₄',f:311.13,wi:1},{n:'Фа#₄',f:369.99,wi:3},
+  {n:'Соль#₄',f:415.30,wi:4},{n:'Ля#₄',f:466.16,wi:5},
+  {n:'До#₅',f:554.37,wi:7},{n:'Ре#₅',f:622.25,wi:8},{n:'Фа#₅',f:739.99,wi:10},
+  {n:'Соль#₅',f:830.61,wi:11},{n:'Ля#₅',f:932.33,wi:12},
+];
+const kb = document.getElementById('keyboard');
+const pnote = document.getElementById('playingNote');
+const WW = 46;
+whites.forEach(k => {
+  const el = document.createElement('div');
+  el.className = 'key-white';
+  el.innerHTML = `<span>${k.n}</span>`;
+  const press = () => {
+    el.classList.add('pressed');
+    setTimeout(() => el.classList.remove('pressed'), 250);
+    playOrgan(k.f, 1.2);
+    pnote.textContent = '♪ ' + k.n + ' — ' + k.f + ' Гц';
+    clearTimeout(window._nt);
+    window._nt = setTimeout(() => { pnote.textContent = 'Нажмите на клавишу...'; }, 2200);
+  };
+  el.addEventListener('mousedown', press);
+  el.addEventListener('touchstart', e => { e.preventDefault(); press(); }, {passive:false});
+  kb.appendChild(el);
+});
+blacks.forEach(k => {
+  const el = document.createElement('div');
+  el.className = 'key-black';
+  el.style.left = (k.wi*WW + k.wi*2 + WW*0.62) + 'px';
+  const press = () => {
+    el.classList.add('pressed');
+    setTimeout(() => el.classList.remove('pressed'), 250);
+    playOrgan(k.f, 1.0);
+    pnote.textContent = '♪ ' + k.n + ' — ' + k.f + ' Гц';
+    clearTimeout(window._nt);
+    window._nt = setTimeout(() => { pnote.textContent = 'Нажмите на клавишу...'; }, 2200);
+  };
+  el.addEventListener('mousedown', press);
+  el.addEventListener('touchstart', e => { e.preventDefault(); press(); }, {passive:false});
+  kb.appendChild(el);
+});
+
+// ── HERO PIPES ──
+const hp = document.getElementById('heroPipes');
+[40,55,70,90,110,130,120,100,80,65,75,95,115,105,85,70,60,80,100,120,110,90,75,65].forEach((h,i) => {
+  const s = document.createElement('span');
+  s.style.height = h + '%';
+  s.style.animationDelay = (i*0.12) + 's';
+  hp.appendChild(s);
+});
+
+// ── PARTICLES ──
+const pe = document.getElementById('particles');
+for(let i=0; i<25; i++){
+  const p = document.createElement('div');
+  p.className = 'particle';
+  const sz = Math.random()*4 + 1;
+  p.style.cssText = `width:${sz}px; height:${sz}px; left:${Math.random()*100}%; animation-duration:${8+Math.random()*12}s; animation-delay:${Math.random()*10}s;`;
+  pe.appendChild(p);
+}
+
+// ── QR CODES ──
+window.addEventListener('load', () => {
+  if(typeof QRCode !== 'undefined'){
+    QRCode.toCanvas(document.getElementById('botQR'), 'https://t.me/hydraulos_calc_2026_bot',
+      {width:160, margin:1, color:{dark:'#06060e', light:'#ffffff'}});
+    QRCode.toCanvas(document.getElementById('siteQR'), 'https://hydraulos-project.github.io/organ-website/',
+      {width:160, margin:1, color:{dark:'#06060e', light:'#ffffff'}});
+  }
+});
+
+// ── REVEAL ──
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, {threshold:0.1});
+document.querySelectorAll('.timeline-item, .anatomy-card, .reveal').forEach((el, i) => {
+  el.style.transitionDelay = (i%6 * 0.08) + 's';
+  obs.observe(el);
+});
+
+// ── COUNTER (using countapi.xyz) ──
+const COUNTER_KEY = 'organ-website-vladimir-gva';
+fetch(`https://api.counterapi.dev/v1/organwebsite/${COUNTER_KEY}/up`)
+  .then(r => r.json())
+  .then(d => {
+    if(d && d.count){
+      document.getElementById('visitCounter').textContent = d.count.toLocaleString('ru-RU');
+    }
+  })
+  .catch(() => {
+    // fallback — локальный счётчик
+    let cnt = parseInt(localStorage.getItem('siteVisits') || '0') + 1;
+    localStorage.setItem('siteVisits', cnt);
+    document.getElementById('visitCounter').textContent = cnt.toLocaleString('ru-RU');
+  });
+
+// ESC закрывает lightbox
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') closeLightbox();
+});
+</script>
+</body>
+</html>
